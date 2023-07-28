@@ -6,63 +6,45 @@ import {
 } from '@nestjs/common';
 import { CreatePlayerDto } from './dtos/create.player.dto';
 import { Player } from './entities/player.entity';
-import { v4 as uuidV4, validate as uuidValidate } from 'uuid';
 import { UpdatePlayerDto } from './dtos/update.player.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class PlayersService {
   private readonly logger = new Logger(PlayersService.name);
 
-  private players: Player[] = [];
+  constructor(
+    @InjectModel('Player') private readonly playerModel: Model<Player>,
+  ) {}
 
-  async create(createPlayerDto: CreatePlayerDto): Promise<void> {
+  async create(createPlayerDto: CreatePlayerDto): Promise<Player> {
     this.logger.log(`create dto: ${JSON.stringify(createPlayerDto)}`);
-    const { name, cellPhone, email } = createPlayerDto;
-
-    const player: Player = {
-      id: uuidV4(),
-      name,
-      cellPhone,
-      email,
-    };
-    this.players.push(player);
+    const result = new this.playerModel(createPlayerDto);
+    return await result.save();
   }
 
   async update(updatePlayerDto: UpdatePlayerDto): Promise<void> {
     this.logger.log(`update dto: ${JSON.stringify(updatePlayerDto)}`);
-    const { id, cellPhone, email, name, ranking, rankingPosition, urlPhoto } =
-      updatePlayerDto;
+    const { id } = updatePlayerDto;
 
-    if (!uuidValidate(id)) {
-      throw new BadRequestException('The value passed as UUID is not valid');
-    }
-
-    const playerFound = this.players.find((player) => player.id === id);
+    const playerFound = await this.playerModel
+      .findByIdAndUpdate(id, { ...updatePlayerDto })
+      .exec();
 
     if (!playerFound) {
       throw new NotFoundException('The player not found');
     }
-
-    playerFound.cellPhone = cellPhone;
-    playerFound.email = email;
-    playerFound.name = name;
-    playerFound.ranking = ranking;
-    playerFound.rankingPosition = rankingPosition;
-    playerFound.urlPhoto = urlPhoto;
   }
 
   async findAll(): Promise<Player[]> {
-    return this.players;
+    return await this.playerModel.find().exec();
   }
 
   async findOne(playerId: string): Promise<Player> {
     this.logger.log(`find playerId: ${playerId}`);
 
-    if (!uuidValidate(playerId)) {
-      throw new BadRequestException('The value passed as UUID is not valid');
-    }
-
-    const playerFound = this.players.find((player) => player.id === playerId);
+    const playerFound = await this.playerModel.findById(playerId).exec();
 
     if (!playerFound) {
       throw new NotFoundException('The player not found');
@@ -71,21 +53,15 @@ export class PlayersService {
     return playerFound;
   }
 
-  async remove(playerId: string): Promise<void> {
+  async remove(playerId: string): Promise<Player> {
     this.logger.log(`remove playerId: ${playerId}`);
 
-    if (!uuidValidate(playerId)) {
-      throw new BadRequestException('The value passed as UUID is not valid');
-    }
+    const playerFound = await this.playerModel.findById(playerId).exec();
 
-    const playerIndex = this.players.findIndex(
-      (player) => player.id === playerId,
-    );
-
-    if (playerIndex === -1) {
+    if (!playerFound) {
       throw new NotFoundException('The player not found');
     }
 
-    this.players.splice(playerIndex, 1);
+    return await this.playerModel.findByIdAndRemove(playerId).exec();
   }
 }

@@ -1,8 +1,19 @@
 import { Module } from '@nestjs/common';
 import { PlayersModule } from './players/players.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [PlayersModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['.env.development.local', '.env.development', '.env.local'],
+    }),
+    MongooseModule.forRoot(
+      'mongodb+srv://kalangoti:jyo7QTmh0Zj70vRF@clusterstudy.gypoxeq.mongodb.net/tennis-management?retryWrites=true&w=majority',
+    ),
+    PlayersModule,
+  ],
   controllers: [],
   providers: [],
 })

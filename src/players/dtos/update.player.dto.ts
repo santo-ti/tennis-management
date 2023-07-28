@@ -1,16 +1,15 @@
 import {
-  IsUUID,
   IsAscii,
   IsEmail,
   IsNotEmpty,
   IsString,
   IsMobilePhone,
 } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class UpdatePlayerDto {
   @IsNotEmpty()
-  @IsUUID()
-  readonly id: string;
+  readonly id: Types.ObjectId;
 
   @IsNotEmpty()
   @IsString()
