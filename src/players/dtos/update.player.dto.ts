@@ -5,12 +5,8 @@ import {
   IsString,
   IsMobilePhone,
 } from 'class-validator';
-import { Types } from 'mongoose';
 
 export class UpdatePlayerDto {
-  @IsNotEmpty()
-  readonly id: Types.ObjectId;
-
   @IsNotEmpty()
   @IsString()
   @IsMobilePhone()

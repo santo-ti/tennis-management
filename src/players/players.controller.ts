@@ -11,19 +11,23 @@ import { CreatePlayerDto } from './dtos/create.player.dto';
 import { PlayersService } from './players.service';
 import { UpdatePlayerDto } from './dtos/update.player.dto';
 import { Player } from './entities/player.entity';
+import { ParseObjectIdPipe } from '../validations/parse-objectid.pipe';
 
 @Controller('api/v1/players')
 export class PlayersController {
   constructor(private readonly playersService: PlayersService) {}
 
   @Post()
-  async createPlayer(@Body() createPlayerDto: CreatePlayerDto): Promise<void> {
+  async create(@Body() createPlayerDto: CreatePlayerDto): Promise<void> {
     await this.playersService.create(createPlayerDto);
   }
 
-  @Put()
-  async updatePlayer(@Body() updatePlayerDto: UpdatePlayerDto): Promise<void> {
-    await this.playersService.update(updatePlayerDto);
+  @Put(':id')
+  async update(
+    @Param('id', ParseObjectIdPipe) playerId: string,
+    @Body() updatePlayerDto: UpdatePlayerDto,
+  ): Promise<void> {
+    await this.playersService.update(playerId, updatePlayerDto);
   }
 
   @Get()
@@ -32,12 +36,16 @@ export class PlayersController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') playerId: string): Promise<Player> {
+  async findOne(
+    @Param('id', ParseObjectIdPipe) playerId: string,
+  ): Promise<Player> {
     return await this.playersService.findOne(playerId);
   }
 
   @Delete(':id')
-  async remove(@Param('id') playerId: string): Promise<void> {
+  async remove(
+    @Param('id', ParseObjectIdPipe) playerId: string,
+  ): Promise<void> {
     await this.playersService.remove(playerId);
   }
 }
