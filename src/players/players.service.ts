@@ -15,10 +15,10 @@ export class PlayersService {
   private readonly logger = new Logger(PlayersService.name);
 
   constructor(
-    @InjectModel('Player') private readonly playerModel: Model<Player>,
+    @InjectModel(Player.name) private readonly playerModel: Model<Player>,
   ) {}
 
-  async create(createPlayerDto: CreatePlayerDto): Promise<Player> {
+  async create(createPlayerDto: CreatePlayerDto): Promise<void> {
     this.logger.log(`create dto: ${JSON.stringify(createPlayerDto)}`);
 
     const { email, cellPhone } = createPlayerDto;
@@ -26,7 +26,7 @@ export class PlayersService {
     await this.verifyCreateExists(email, cellPhone);
 
     const result = new this.playerModel(createPlayerDto);
-    return await result.save();
+    await result.save();
   }
 
   async update(
@@ -37,7 +37,7 @@ export class PlayersService {
 
     const { email, cellPhone } = updatePlayerDto;
 
-    // await this.verifyUpdateExists(email, cellPhone, playerId);
+    await this.verifyUpdateExists(email, cellPhone, playerId);
 
     const playerFound = await this.playerModel
       .findByIdAndUpdate(playerId, { ...updatePlayerDto })
