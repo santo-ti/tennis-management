@@ -5,11 +5,10 @@ import {
   Logger,
   BadRequestException,
 } from '@nestjs/common';
-import { CreatePlayerDto } from './dtos/create.player.dto';
+import { CreatePlayerDto, UpdatePlayerDto } from './dtos';
 import { Player } from './entities/player.entity';
-import { UpdatePlayerDto } from './dtos/update.player.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class PlayersService {
