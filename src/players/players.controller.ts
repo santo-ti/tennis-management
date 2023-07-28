@@ -7,9 +7,8 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { CreatePlayerDto } from './dtos/create.player.dto';
+import { CreatePlayerDto, UpdatePlayerDto } from './dtos';
 import { PlayersService } from './players.service';
-import { UpdatePlayerDto } from './dtos/update.player.dto';
 import { Player } from './entities/player.entity';
 import { ParseObjectIdPipe } from '../validations/parse-objectid.pipe';
 
