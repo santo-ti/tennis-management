@@ -15,7 +15,7 @@ export class PlayersService {
   private readonly logger = new Logger(PlayersService.name);
 
   constructor(
-    @InjectModel(Player.name) private readonly playerModel: Model<Player>,
+    @InjectModel(Player.name) private readonly model: Model<Player>,
   ) {}
 
   async create(createPlayerDto: CreatePlayerDto): Promise<void> {
@@ -25,7 +25,7 @@ export class PlayersService {
 
     await this.verifyCreateExists(email, cellPhone);
 
-    const result = new this.playerModel(createPlayerDto);
+    const result = new this.model(createPlayerDto);
     await result.save();
   }
 
@@ -39,8 +39,8 @@ export class PlayersService {
 
     await this.verifyUpdateExists(email, cellPhone, playerId);
 
-    const playerFound = await this.playerModel
-      .findByIdAndUpdate(playerId, { ...updatePlayerDto })
+    const playerFound = await this.model
+      .findByIdAndUpdate(playerId, updatePlayerDto, { new: true })
       .exec();
 
     if (!playerFound) {
@@ -49,13 +49,13 @@ export class PlayersService {
   }
 
   async findAll(): Promise<Player[]> {
-    return await this.playerModel.find().exec();
+    return await this.model.find().exec();
   }
 
   async findOne(playerId: string): Promise<Player> {
     this.logger.log(`find playerId: ${playerId}`);
 
-    const playerFound = await this.playerModel.findById(playerId).exec();
+    const playerFound = await this.model.findById(playerId).exec();
 
     if (!playerFound) {
       throw new NotFoundException('The player not found');
@@ -67,13 +67,13 @@ export class PlayersService {
   async remove(playerId: string): Promise<void> {
     this.logger.log(`remove playerId: ${playerId}`);
 
-    const playerFound = await this.playerModel.findById(playerId).exec();
+    const playerFound = await this.model.findById(playerId).exec();
 
     if (!playerFound) {
       throw new NotFoundException('The player not found');
     }
 
-    const result = await this.playerModel.deleteOne({ _id: playerId }).exec();
+    const result = await this.model.deleteOne({ _id: playerId }).exec();
 
     if (!result || !result.acknowledged) {
       throw new InternalServerErrorException('Error deleting player');
@@ -81,15 +81,13 @@ export class PlayersService {
   }
 
   private async verifyCreateExists(email: string, cellPhone: string) {
-    const playerEmailFound = await this.playerModel.findOne({ email }).exec();
+    const playerEmailFound = await this.model.findOne({ email }).exec();
 
     if (playerEmailFound) {
       throw new BadRequestException('The email is already exists');
     }
 
-    const playerCellPhoneFound = await this.playerModel
-      .findOne({ cellPhone })
-      .exec();
+    const playerCellPhoneFound = await this.model.findOne({ cellPhone }).exec();
 
     if (playerCellPhoneFound) {
       throw new BadRequestException('The phone is already exists');
@@ -101,14 +99,14 @@ export class PlayersService {
     cellPhone: string,
     playerId: string,
   ) {
-    const playerFound = await this.playerModel.findById(playerId).exec();
+    const playerFound = await this.model.findById(playerId).exec();
 
     if (!playerFound) {
       throw new NotFoundException('The player not found');
     }
 
     if (playerFound.email !== email) {
-      const playerEmailFound = await this.playerModel.findOne({ email }).exec();
+      const playerEmailFound = await this.model.findOne({ email }).exec();
 
       if (playerEmailFound) {
         throw new BadRequestException('The email is already exists');
@@ -116,7 +114,7 @@ export class PlayersService {
     }
 
     if (playerFound.cellPhone !== cellPhone) {
-      const playerCellPhoneFound = await this.playerModel
+      const playerCellPhoneFound = await this.model
         .findOne({ cellPhone })
         .exec();
 

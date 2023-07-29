@@ -14,11 +14,11 @@ import { ParseObjectIdPipe } from '../validations/parse-objectid.pipe';
 
 @Controller('api/v1/players')
 export class PlayersController {
-  constructor(private readonly playersService: PlayersService) {}
+  constructor(private readonly service: PlayersService) {}
 
   @Post()
   async create(@Body() createPlayerDto: CreatePlayerDto): Promise<void> {
-    await this.playersService.create(createPlayerDto);
+    await this.service.create(createPlayerDto);
   }
 
   @Put(':id')
@@ -26,25 +26,25 @@ export class PlayersController {
     @Param('id', ParseObjectIdPipe) playerId: string,
     @Body() updatePlayerDto: UpdatePlayerDto,
   ): Promise<void> {
-    await this.playersService.update(playerId, updatePlayerDto);
+    await this.service.update(playerId, updatePlayerDto);
   }
 
   @Get()
   async findALl(): Promise<Player[]> {
-    return await this.playersService.findAll();
+    return await this.service.findAll();
   }
 
   @Get(':id')
   async findOne(
     @Param('id', ParseObjectIdPipe) playerId: string,
   ): Promise<Player> {
-    return await this.playersService.findOne(playerId);
+    return await this.service.findOne(playerId);
   }
 
   @Delete(':id')
   async remove(
     @Param('id', ParseObjectIdPipe) playerId: string,
   ): Promise<void> {
-    await this.playersService.remove(playerId);
+    await this.service.remove(playerId);
   }
 }
