@@ -10,7 +10,7 @@ import {
 import { CreatePlayerDto, UpdatePlayerDto } from './dtos';
 import { PlayersService } from './players.service';
 import { Player } from './entities/player.entity';
-import { ParseObjectIdPipe } from '../validations/parse-objectid.pipe';
+import { ParseObjectIdPipe } from '../common/validations/parse-objectid.pipe';
 
 @Controller('api/v1/players')
 export class PlayersController {

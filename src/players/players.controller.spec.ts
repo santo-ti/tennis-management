@@ -7,6 +7,7 @@ import { getModelToken } from '@nestjs/mongoose';
 
 describe('PlayersController', () => {
   let controller: PlayersController;
+  let service: PlayersService;
   let mockModel: Model<Player>;
 
   beforeEach(async () => {
@@ -19,9 +20,14 @@ describe('PlayersController', () => {
     }).compile();
 
     controller = module.get<PlayersController>(PlayersController);
+    service = module.get<PlayersService>(PlayersService);
   });
 
-  it('should be defined', () => {
+  it('should be defined with controller', () => {
     expect(controller).toBeDefined();
+  });
+
+  it('should be defined with PlayersService', () => {
+    expect(service).toBeDefined();
   });
 });

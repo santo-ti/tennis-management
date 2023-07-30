@@ -9,8 +9,8 @@ import {
   Patch,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { Category } from './entities/category.entity.ts';
-import { ParseObjectIdPipe } from 'src/validations/parse-objectid.pipe';
+import { Category } from './entities/category.entity';
+import { ParseObjectIdPipe } from '../common/validations/parse-objectid.pipe';
 import { CreateCategoryDto, UpdateCategoryDto } from './dtos';
 
 @Controller('api/v1/categories')

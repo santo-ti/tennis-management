@@ -1,17 +1,18 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Category } from './entities/category.entity.ts';
+import { Category } from './entities/category.entity';
 import { Model } from 'mongoose';
 import { CreateCategoryDto, UpdateCategoryDto } from './dtos';
-import { PlayersService } from 'src/players/players.service.js';
+import { PlayersService } from '../players/players.service';
 
 @Injectable()
 export class CategoriesService {
   private readonly logger = new Logger(CategoriesService.name);
 
-  @InjectModel(Category.name) private readonly model: Model<Category>;
-
-  private readonly playersService: PlayersService;
+  constructor(
+    @InjectModel(Category.name) private readonly model: Model<Category>,
+    private readonly playersService: PlayersService,
+  ) {}
 
   async create(category: CreateCategoryDto): Promise<void> {
     this.logger.log(`create dto: ${JSON.stringify(category)}`);
